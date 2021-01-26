@@ -1,1 +1,5 @@
-module "github.com/dulei0726/gateway"
+module github.com/dulei0726/gateway
+
+go 1.14
+
+require github.com/gin-gonic/gin v1.6.3 // indirect
