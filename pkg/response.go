@@ -3,7 +3,6 @@ package pkg
 import (
 	"github.com/dulei0726/gateway/pkg/errcode"
 	"github.com/gin-gonic/gin"
-	"net/http"
 )
 
 type Response struct {
@@ -23,7 +22,7 @@ func NewResponse(ctx *gin.Context) *Response {
 }
 
 func (r *Response) ToResponse(data interface{}) {
-	r.Ctx.JSON(http.StatusOK, responseData{
+	r.Ctx.JSON(errcode.Success.StatusCode(), responseData{
 		Code: errcode.Success.Code(),
 		Msg:  errcode.Success.Msg(),
 		Data: data,
@@ -43,13 +42,13 @@ func (r *Response) ToResponseList(list interface{}, totalRows int) {
 			},
 		},
 	}
-	r.Ctx.JSON(http.StatusOK, respData)
+	r.Ctx.JSON(errcode.Success.StatusCode(), respData)
 }
 
 func (r *Response) ToErrorResponse(err error) {
 	e, ok := err.(*errcode.Error)
 	if !ok {
-		e = errcode.ServerError
+		e = errcode.UnknownError.WithDetails(err.Error())
 	}
 	r.Ctx.JSON(e.StatusCode(), responseData{
 		Code: e.Code(),

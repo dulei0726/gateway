@@ -5,11 +5,6 @@ import (
 	"strconv"
 )
 
-const (
-	DefaultPageSize = 50
-	MaxPageSize     = 200
-)
-
 type Pager struct {
 	// 页码
 	Page int `json:"page"`

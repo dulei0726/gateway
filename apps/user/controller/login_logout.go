@@ -32,12 +32,16 @@ func (controller *LoginLogoutController) Login(c *gin.Context) {
     }
 
     svc := service.NewLoginLogoutService()
-    respData, err := svc.Login(loginRequest)
+    token, err := svc.Login(loginRequest)
     if err != nil {
         response.ToErrorResponse(err)
         return
     }
-    response.ToResponse(respData)
+    c.SetCookie(pkg.AccessTokenCookieName, token.AccessToken.GetTokenValue(), pkg.TokenCookieMaxAge, pkg.TokenCookiePath,
+        pkg.TokenCookieDomain, pkg.TokenCookieSecure, pkg.TokenCookieHttpOnly)
+    c.SetCookie(pkg.RefreshTokenCookieName, token.RefreshToken.GetTokenValue(), pkg.TokenCookieMaxAge, pkg.TokenCookiePath,
+        pkg.TokenCookieDomain, pkg.TokenCookieSecure, pkg.TokenCookieHttpOnly)
+    response.ToResponse(nil)
     return
 }
 

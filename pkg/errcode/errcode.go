@@ -2,7 +2,6 @@ package errcode
 
 import (
 	"fmt"
-	"net/http"
 )
 
 type Error struct {
@@ -12,16 +11,18 @@ type Error struct {
 	msg string
 	// 详细信息
 	details []string
+	// http状态码
+	httpCode int
 }
 
 var codes = map[int]string{}
 
-func NewError(code int, msg string) *Error {
+func NewError(code, httpCode int, msg string) *Error {
 	if _, ok := codes[code]; ok {
 		panic(fmt.Sprintf("错误码 %d 已经存在，请更换一个", code))
 	}
 	codes[code] = msg
-	return &Error{code: code, msg: msg}
+	return &Error{code: code, msg: msg, httpCode: httpCode}
 }
 
 func (e *Error) Error() string {
@@ -54,24 +55,5 @@ func (e *Error) WithDetails(details ...string) *Error {
 }
 
 func (e *Error) StatusCode() int {
-	switch e.Code() {
-	case Success.Code():
-		return http.StatusOK
-	case ServerError.Code():
-		return http.StatusInternalServerError
-	case InvalidParams.Code():
-		return http.StatusBadRequest
-	case UnauthorizedAuthNotExist.Code():
-		fallthrough
-	case UnauthorizedTokenError.Code():
-		fallthrough
-	case UnauthorizedTokenGenerate.Code():
-		fallthrough
-	case UnauthorizedTokenTimeout.Code():
-		return http.StatusUnauthorized
-	case TooManyRequests.Code():
-		return http.StatusTooManyRequests
-	}
-
-	return http.StatusInternalServerError
+	return e.httpCode
 }

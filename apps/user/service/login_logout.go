@@ -15,7 +15,7 @@ func NewLoginLogoutService() *LoginLogoutService {
     }
 }
 
-func (service *LoginLogoutService) Login(request *dto.LoginRequest) (*dto.LoginResponse, error) {
+func (service *LoginLogoutService) Login(request *dto.LoginRequest) (*OAuth2Token, error) {
     return nil, nil
 }
 
